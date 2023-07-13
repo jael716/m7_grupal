@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'app.CustomUser',
 ]
 
 MIDDLEWARE = [
@@ -132,4 +133,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'home'
 
 REGISTER_USER_REDIRECT_URL = 'home'
+
+AUTH_USER_MODEL = 'app.CustomUser'
+
 

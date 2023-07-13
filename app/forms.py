@@ -6,7 +6,7 @@ from .models import Producto, Proveedor, Pedido
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = '__all__'
+        fields = ['sku', 'nombre', 'cantidad', 'categoria', 'fabricante', 'precio']
         
     def __init__(self, *args, **kwargs):
         super(ProductoForm, self).__init__(*args, **kwargs)
@@ -15,26 +15,10 @@ class ProductoForm(forms.ModelForm):
         for field in form_fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
-    def save(self, commit=True):
-        # Obtenemos una instancia del producto pero aún no la guardamos
-        producto = super().save(commit=False)
-        # Verificamos si el SKU del producto ya existe
-        try:
-            prod_existente = Producto.objects.get(sku=producto.sku)
-            # Si el producto existe, aumentamos la cantidad y guardamos
-            prod_existente.cantidad += producto.cantidad
-            prod_existente.save()
-        except Producto.DoesNotExist:
-            # Si el producto no existe, simplemente lo guardamos
-            if commit:
-                producto.save()
-        return producto
-     
-
 class ProveedorForm(forms.ModelForm):
     class Meta:
         model = Proveedor
-        fields = '__all__'
+        fields = ['rut', 'nombre', 'razon_social']
 
     def __init__(self, *args, **kwargs):
         super(ProveedorForm, self).__init__(*args, **kwargs)

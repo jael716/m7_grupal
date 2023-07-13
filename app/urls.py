@@ -9,9 +9,12 @@ urlpatterns = [
     path('pedido/', views.pedido, name="pedido"),
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', LogoutView.as_view(template_name='logout.html'), name='logout'),
-    path('register_user', views.register_user, name="register_user"),
+    #path('register_user', views.register_user, name="register_user"),
     path('vistapedidos',views.pedido_list,name="vistapedidos"),
     path('eliminar_pedido/<id>/', views.eliminar_pedido, name='eliminar_pedido'),
     path('modificar_pedido/<id>/', views.modificar_pedido, name='modificar_pedido'),
+    path('vistaproductos',views.producto_list,name="vistaproductos"),
+    path('eliminar_producto/<id>/', views.eliminar_producto, name='eliminar_producto'),
+    path('modificar_producto/<id>/', views.modificar_producto, name='modificar_producto'),
 ]
 

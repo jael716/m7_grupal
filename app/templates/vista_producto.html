@@ -1,0 +1,41 @@
+{% extends 'base_layout.html' %}
+
+{% load static %}
+{% block content %}
+<div class="container">
+  <h2 class="my-4">Productos</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">SKU</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Categoria</th>
+        <th scope="col">Fabricante</th>
+        <th scope="col">Precio</th>    
+    </tr>
+    </thead>
+    <tbody>
+      {% for producto in productos %}
+        <tr>
+          <td>{{ producto.sku }}</td>
+          <td>{{ producto.nombre }}</td>
+          <td>{{ producto.cantidad }}</td>
+          <td>{{ producto.categoria }}</td>
+          <td>{{ producto.fabricante }}</td>
+          <td>{{ producto.precio }}</td>
+          <td><a href="{% url 'eliminar_producto' producto.id %}"><input type='submit' value='Eliminar'/></a></td>
+          <td><a href="{% url 'modificar_producto' producto.id %}">{{producto.title}}<input type='submit' value='Modificar'/></a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">No hay producto.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+{% endblock %}

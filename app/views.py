@@ -36,46 +36,7 @@ def proveedor(request):
     return render(request, 'proveedor.html', context=context)
 
 
-@login_required
-def producto(request):
-    form = ProductoForm()
-    if request.method == "POST":
-        form = ProductoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/producto')
-    context = {'form': form}
-    return render(request, 'producto.html', context=context)
-
-
-@login_required
-def pedido(request):
-   
-    form = PedidoForm()
-
-    if request.method == "POST":
-        form = PedidoForm(request.POST)
- 
-        if form.is_valid():
-
-            pedido = Pedido()
-            pedido.nombre = form.cleaned_data['nombre']
-            print(pedido.nombre)
-
-            pedido.cantidad = form.cleaned_data['cantidad']
-            print(pedido.cantidad)
-
-            form.save()
-            
-        else:
-            print("Datos invalidos")
-        return redirect('/vistapedidos')
-    context = {'form': form}
-
-    return render(request, 'pedido.html', context=context)
-
-
-@login_required
+"""@login_required
 def register_user(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -92,9 +53,46 @@ def register_user(request):
         form = UserRegistrationForm()
     
     context = {'form': form}
-    return render(request, 'register_user.html', context)
+    return render(request, 'register_user.html', context)"""
 
-    
+#----------------------------------------------------------------
+
+@login_required
+def pedido(request):
+    form = PedidoForm()
+    productos = Producto.objects.all()
+
+    if request.method == "POST":
+        form = PedidoForm(request.POST)
+
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            cantidad = form.cleaned_data['cantidad']
+
+            try:
+                producto = Producto.objects.get(nombre=nombre)
+            except Producto.DoesNotExist:
+                messages.warning(request, f"No existe el producto {nombre}.")
+                return redirect('/pedido')
+
+            if cantidad > producto.cantidad:
+                messages.warning(request, f"No hay suficiente cantidad de {nombre} disponible.")
+                return redirect('/pedido')
+
+            pedido = Pedido(nombre=nombre, cantidad=cantidad)
+            pedido.save()
+
+            producto.cantidad -= cantidad
+            producto.save()
+
+            messages.success(request, "Pedido realizado correctamente.")
+            return redirect('vistapedidos')
+
+    context = {'form': form, 'productos': productos}
+    return render(request, 'pedido.html', context=context)
+
+
+
 def pedido_list(request):
     pedidos = Pedido.objects.all()
     return render(request, 'vista_pedido.html', {'pedidos':pedidos})
@@ -102,6 +100,7 @@ def pedido_list(request):
 
 
 def eliminar_pedido(request, id):
+    
     pedidos = Pedido.objects.get(pk=id)
     if pedidos.estado=="P":
          if request.method == "POST":
@@ -121,3 +120,41 @@ def modificar_pedido(request, id):
         return redirect('vistapedidos')
     else:
         return render(request, 'modificar_pedido.html', {'form':form})
+    
+#---------------------------------------------------------------
+@login_required
+def producto(request):
+    form = ProductoForm()
+    if request.method == "POST":
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/vistaproductos')
+    context = {'form': form}
+    return render(request, 'producto.html', context=context)
+
+
+def producto_list(request):
+    productos = Producto.objects.all()
+    return render(request, 'vista_producto.html', {'productos':productos})
+
+
+def eliminar_producto(request, id):
+    productos = Producto.objects.get(pk=id)
+    if request.method == "POST":
+             productos.delete()
+             return redirect('vistaproductos')
+    return render(request, 'eliminar_pedido.html', {'productos': productos})
+
+
+def modificar_producto(request, id):
+    productos = Producto.objects.get(pk=id)
+    form = ProductoForm(instance=productos)
+    if request.method =="POST":
+        form = PedidoForm(request.POST, instance=productos)
+        form.save()
+        return redirect('vistaproductos')
+    else:
+        return render(request, 'modificar_producto.html', {'form':form})
+
+#----------------------------------------------------------
