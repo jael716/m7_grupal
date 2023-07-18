@@ -57,19 +57,22 @@
                 <a class="nav-link" href="/producto">Producto</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/pedido">Pedido</a>
-              </li>              
+                <a class="nav-link" href="/pedido">Ingreso Pedidos</a>
+              </li>    
+              <li class="nav-item">
+                <a class="nav-link" href="/vistapedidos">Vista Pedidos</a>
+              </li>           
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'logout' %}">Logout</a>
               </li> 
-
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'register_user' %}">Register User</a>
+              </li>
               {% else %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'login' %}">Login</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'register_user' %}">Register User</a>
-              </li>
+           
              
               {% endif %}
             </ul>

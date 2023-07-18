@@ -14,6 +14,21 @@ class ProductoForm(forms.ModelForm):
         form_fields = ['sku', 'nombre', 'cantidad', 'categoria', 'fabricante', 'precio']
         for field in form_fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
+
+    def save(self, commit=True):
+        # Obtenemos una instancia del producto pero aún no la guardamos
+        producto = super().save(commit=False)
+        # Verificamos si el SKU del producto ya existe
+        try:
+            prod_existente = Producto.objects.get(sku=producto.sku)
+            # Si el producto existe, aumentamos la cantidad y guardamos
+            prod_existente.cantidad += producto.cantidad
+            prod_existente.save()
+        except Producto.DoesNotExist:
+            # Si el producto no existe, simplemente lo guardamos
+            if commit:
+                producto.save()
+        return producto
      
 
 class ProveedorForm(forms.ModelForm):
@@ -32,14 +47,17 @@ class ProveedorForm(forms.ModelForm):
 class PedidoForm(forms.ModelForm):
     class Meta:
         model= Pedido
-        fields = '__all__'
-
+        fields = ['nombre','cantidad']
+        
     def __init__(self, *args, **kwargs):
         super(PedidoForm, self).__init__(*args, **kwargs)
 
         form_fields = ['nombre', 'cantidad']
         for field in form_fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+ 
 
 class UserRegistrationForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}))
